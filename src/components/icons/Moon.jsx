@@ -1,9 +1,9 @@
 
 // eslint-disable-next-line react/prop-types
-const Moon = ({fill}) => {
+const Moon = () => {
     return (
         <svg 
-            fill={fill}
+            fill={'#fff'}
             xmlns="http://www.w3.org/2000/svg" 
             width="26" height="26"
         >
