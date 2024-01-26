@@ -4,6 +4,7 @@ import TodoList from "./components/TodoList";
 import TodoComputed from "./components/TodoComputed";
 import TodoFilter from "./components/TodoFilter";
 import { useEffect, useState } from "react";
+import { DragDropContext } from '@hello-pangea/dnd';
 
 const initialState =JSON.parse(localStorage.getItem('todos')) || [];
 
@@ -61,16 +62,33 @@ const App = () =>{
     }
   }
 
+  const handleDragEnd = result => {
+    if(!result.destination) return;
+      const startIndex = result.source.index;
+      const endIndex = result.destination.index;
+      const copyArray = [...todos];
+      const [reorderItem] = copyArray.splice(startIndex, 1);
+      
+      copyArray.splice(endIndex, 0, reorderItem);
+
+      setTodos(copyArray);
+  }
+
+
   return(
     <div className="flex flex-col items-center min-h-screen bg-gray-300 bg-[url('./assets/images/bg-mobile-light.jpg')] dark:bg-[url('./assets/images/bg-mobile-dark.jpg')] bg-contain bg-no-repeat transition-all duration-1000 dark:bg-gray-900 md:bg-[url('./assets/images/bg-desktop-light.jpg')] md:dark:bg-[url('./assets/images/bg-desktop-dark.jpg')] ">
       <Header/>
       <main className="container max-auto px-4 md:max-w-xl">
         <TodoCreate createTodos={createTodos}/>
-        <TodoList 
-          todos={filteredTodos()} 
-          handleDelete={handleDelete}
-          updateTodos={updateTodos}
-        />
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <TodoList 
+            todos={filteredTodos()} 
+            handleDelete={handleDelete}
+            updateTodos={updateTodos}
+          />
+        </DragDropContext>
+
         <TodoComputed
           handleSum={handleSum}
           handleClear={handleClear}
@@ -80,7 +98,7 @@ const App = () =>{
           filter={filter}
         />
       </main>
-      <footer className="text-center mt-8 text-gray-500 dark:taxt-gray-400">
+      <footer className="text-center mt-8 text-gray-400 dark:taxt-gray-400 font-extrabold border-b-2 text-lg border-b-gray-400">
         Drag and drop to reorder List
       </footer> 
     </div>
